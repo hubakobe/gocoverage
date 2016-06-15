@@ -2,6 +2,7 @@ package pkgcodelinecaculator
 
 import (
 	"bufio"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -27,6 +28,7 @@ func (pcl *Pkgcodelinecaculator) Caculate() (codeLine, commentLine int) {
 		cl, coml = pcl.caculateFileCodeLine(file)
 		codeLine += cl
 		commentLine += coml
+		fmt.Println(file)
 	}
 	return
 }
@@ -67,6 +69,9 @@ func (pcl *Pkgcodelinecaculator) listFiles() ([]string, error) {
 		if fi.IsDir() {
 			continue
 		}
+		//		if sub := strings.Split(fi.Name(), "_test"); len(sub) > 1 {
+		//			continue
+		//		}
 		if strings.HasSuffix(strings.ToUpper(fi.Name()), suffix) {
 			goFiles = append(goFiles, pcl.rootPath+PthSep+fi.Name())
 		}

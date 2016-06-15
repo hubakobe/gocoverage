@@ -1,6 +1,7 @@
 package coveragecaculator
 
 import (
+	"flag"
 	"fmt"
 	"gocoverage/pkgcodelinecaculator"
 	"gocoverage/pkgcoverageratecaculator"
@@ -22,6 +23,15 @@ type Coveragecaculator struct {
 
 func getAllPackage(path string) []string {
 	var packageDirs []string
+	var extractPaths []string
+	args := flag.Args()
+	args = args[1:]
+	for _, arg := range args {
+		if arg != "" {
+			extractPaths = append(extractPaths, arg)
+		}
+	}
+
 	filepath.Walk(path, func(packagePath string, fi os.FileInfo, err error) error {
 		if nil == fi {
 			return err
@@ -35,6 +45,14 @@ func getAllPackage(path string) []string {
 	for index, value := range packageDirs {
 		if sub := strings.Split(value, ".git"); len(sub) > 1 {
 			packageDirs[index] = ""
+			continue
+		}
+		for _, path := range extractPaths {
+			if sub := strings.Split(value, path); len(sub) > 1 {
+				packageDirs[index] = ""
+				fmt.Println(value, path)
+				break
+			}
 		}
 	}
 	var packageDirsFilterd []string
